@@ -44,7 +44,7 @@ foreach($EnabledUser in $EnabledUsers) {
 }
 
 # Build the Email notification
-$subject = $env:USERDNSDOMAIN + ' inactive users report'
+$subject = 'Inactive users report'
 
 # Format the HTML
 $html = $('Hello ' + $CustomerEmailAddress + ',<br><br>')
