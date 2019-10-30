@@ -72,6 +72,8 @@ $Context = New-AzStorageContext -StorageAccountName $StorageAccountName -Storage
 
 # Get the container
 $Containers = Get-AzStorageContainer -Context $Context
+# Ignore anything like 'bootdiagnostics'
+$Containers = $Containers | Where-Object {$_.Name -notlike 'bootdiagnostics*'}
 
 # Iterate through each Container
 foreach($Container in $Containers) {
