@@ -73,15 +73,20 @@ $Context = New-AzStorageContext -StorageAccountName $StorageAccountName -Storage
 # Get the container
 $Containers = Get-AzStorageContainer -Context $Context
 # Ignore anything like 'bootdiagnostics'
-$Containers = $Containers | Where-Object {$_.Name -notlike 'bootdiagnostics*'}
+$Containers = $Containers | Where-Object {$_.Name -like '*backup*'}
 
 # Iterate through each Container
 foreach($Container in $Containers) {
 
     # Set the time as we only want the backups since the bak file.
-    $After = (Get-Date -Hour 23 -Minute 0 -Second 0).AddDays(-1)
+    $After = (Get-Date -Hour 23 -Minute 1 -Second 0).AddDays(-1)
     # Get the blobs in the container, but only the ones written after the time we specified. 
     $Blobs = Get-AzStorageBlob -Container $Container.Name -Context $Context | Where-Object {$_.LastModified -gt $After}
+    # Ignore any master, model, msdb or perfmon
+    $Blobs = $Blobs | Where-Object {$_.Name -notlike '*master*'}
+    $Blobs = $Blobs | Where-Object {$_.Name -notlike '*model*'}
+    $Blobs = $Blobs | Where-Object {$_.Name -notlike '*msdb*'}
+    $Blobs = $Blobs | Where-Object {$_.Name -notlike '*PerfMon*'}
 
     # Download each blob to the Download location
     foreach($Blob in $Blobs) { 
