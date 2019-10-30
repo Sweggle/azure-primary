@@ -48,6 +48,10 @@ function Get-KeyVaultSecretValue {
 
 }
 
+# Transcript log file
+$LogFileName = 'C:\Excenta\Transcript\LogFile-' + (Get-Date -Format dd-MM-yy-HH-mm-ss) + '.txt'
+Start-Transcript -Path $LogFileName -Force
+
 # Get the Access Token from the Key Vault
 $KeyVaultToken = Get-KeyVaultAccessToken
 
@@ -97,3 +101,10 @@ foreach($Container in $Containers) {
 
 }
 
+# Clean the transcripts folder - older than 30 days is deleted
+$Items = Get-ChildItem -Path 'C:\Excenta\Transcript' | Where-Object {$_.CreationTime -lt (Get-Date).AddDays(-30)}
+foreach($Item in $Items) {
+
+    Remove-Item $Item.FullName -Force -Verbose
+
+}
